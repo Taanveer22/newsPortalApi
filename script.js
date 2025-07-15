@@ -1,6 +1,5 @@
 console.log("connected");
-// step-01
-
+// step-01 : category button fetched from api
 const loadCategory = async () => {
   const response = await fetch(
     "https://openapi.programming-hero.com/api/news/categories"
@@ -8,7 +7,7 @@ const loadCategory = async () => {
   const data = await response.json();
   // console.log(data.data.news_category);
 
-  // step-02
+  // step-02 : category nabar showed in the ui
   const categoryNavbar = document.getElementById("category-navbar");
   const newsCategoryArray = data.data.news_category;
   newsCategoryArray.forEach((item) => {
@@ -23,21 +22,31 @@ const loadCategory = async () => {
     categoryNavbar.append(div);
   });
 };
+// ---------------------------------------------------------------------
 
-// step-03
+// step-03 : news card api fetched 
 const loadNews = async (catId) => {
-  console.log(catId);
+  // document.getElementById("loading-spiner").style.display = "block";
+  // console.log(catId);
   const response = await fetch(
-    "https://openapi.programming-hero.com/api/news/category/01"
+    `https://openapi.programming-hero.com/api/news/category/${catId}`
   );
   const data = await response.json();
   // console.log(data.data);
 
-  // step-04
+  // step-04 : news card data show in the ui
   const newsContainer = document.getElementById("news-container");
+  newsContainer.innerHTML = "";
   // console.log(newsContainer);
   const newsCardArray = data.data;
+  if (newsCardArray.length > 0) {
+    document.getElementById("loading-spiner").style.display = "none";
+    // console.log("data ace");
+  } else {
+    document.getElementById("loading-spiner").style.display = "block";
+  }
   newsCardArray.forEach((element) => {
+    // document.getElementById("loading-spiner").style.display = "none";
     // console.log(element);
     const div = document.createElement("div");
     div.classList.add("single-news");
@@ -75,7 +84,10 @@ const loadNews = async (catId) => {
                     <p>${element.total_view}</p>
                 </div>
                 <div class="details-btn-container">
-                    <button class="details-btn">Details</button>
+                    <button onclick = "checkDetails('${element.title}')" 
+                            class="details-btn">
+                                  Details
+                    </button>
                 </div>
             </div>
         </div>
@@ -83,7 +95,26 @@ const loadNews = async (catId) => {
     newsContainer.append(div);
   });
 };
+// -----------------------------------------------------------
+
+
+// step-05 : implepent a function into search box for category id
+const handleSearch = () => {
+  const inputValue = document.getElementById("search-box").value;
+  // console.log(inputValue);
+  if (inputValue) {
+    loadNews(inputValue);
+  } else {
+    alert("please enter a valid category id");
+  }
+};
+
+// step-06 : implement funcition for details button to show the title in the log
+const checkDetails = (text) => {
+  console.log(text);
+};
+
 
 // function invocation
 loadCategory();
-loadNews();
+loadNews("01");
